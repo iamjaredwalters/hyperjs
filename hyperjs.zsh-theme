@@ -55,7 +55,7 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
+    echo -n "%{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
   else
     echo -n "%{$bg%}%{$fg%} "
   fi
@@ -70,7 +70,7 @@ prompt_end() {
   else
     echo -n "%{%k%}"
   fi
-  echo -n "%{%f%}"
+  echo -n "%F{grey}\n\uf105%{%f%}"
   CURRENT_BG=''
 }
 
@@ -79,9 +79,20 @@ prompt_end() {
 
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
+  local GREETING="Aye, Captain "
+  local ROCKET="\uf135"
+  local ROBOT="\ufba7"
+  local APPLE="\uf179"
+  local DISNEY="\uf286 "
+  local COLOR_EXAMPLE_GREETING=$FG[004]$GREETING%{$reset_color%}
+  local CURRENT_USER=$USER
+
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    #prompt_segment blue black "%(!.%{%F{yellow}%}.)$USER@%m"
-    prompt_segment blue black "🦄 "
+    if [[ $USER == "waltj067" ]]; then
+      prompt_segment black default "%(!.%{%F{yellow}%}.)🤖  Sup, J-rod "
+    else
+      prompt_segment black default "%(!.%{%F{yellow}%}.)👹 "
+    fi
   fi
 }
 
@@ -91,7 +102,7 @@ prompt_git() {
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\ue0a0'         # 
+    PL_BRANCH_CHAR=$'\uf126'         # 
   }
   local ref dirty mode repo_path
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
@@ -119,8 +130,8 @@ prompt_git() {
     zstyle ':vcs_info:*' enable git
     zstyle ':vcs_info:*' get-revision true
     zstyle ':vcs_info:*' check-for-changes true
-    zstyle ':vcs_info:*' stagedstr '✚'
-    zstyle ':vcs_info:*' unstagedstr '●'
+    zstyle ':vcs_info:*' stagedstr '\uf067 '
+    zstyle ':vcs_info:*' unstagedstr '\uf192 '
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
@@ -188,7 +199,9 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue black '%~'
+  local path_width
+  path_width=$(( [#10] $COLUMNS * 0.15 ))
+  prompt_segment blue black "\uf07c  %${path_width}<…<%~%<<"
 }
 
 # Virtualenv: current working virtualenv
@@ -206,7 +219,7 @@ prompt_virtualenv() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
+  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}💩"
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
 
@@ -219,7 +232,7 @@ build_prompt() {
   prompt_status
   prompt_virtualenv
   prompt_context
-  #prompt_dir
+  prompt_dir
   #prompt_git
   prompt_bzr
   prompt_hg
