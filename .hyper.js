@@ -18,7 +18,7 @@ module.exports = {
     fontWeight: 'normal',
 
     // font weight for bold characters: 'normal' or 'bold'
-    fontWeightBold: 'bold',
+    fontWeightBold: 'normal',
 
     // terminal cursor background color and opacity (hex, rgb, hsl, hsv, hwb or cmyk)
     cursorColor: 'rgba(248,28,229,0.8)',
@@ -136,6 +136,13 @@ module.exports = {
     hyperStatusLine: {
       // aheadColor: '#808080',
     },
+
+    // Hyper Pane Configs
+    paneNavigation: {
+      jump_prefix: 'ctrl+alt',
+      showIndicators: false, // Show pane number
+      inactivePaneOpacity: 0.5,
+    }
   },
 
   // a list of plugins to fetch and install from npm
@@ -147,9 +154,13 @@ module.exports = {
   // Note: order matters here: https://github.com/henrikdahl/hyper-tabs-enhanced/issues/10
   plugins: [
     'hyper-chesterish',
-    'hyper-statusline',
     'hyper-tabs-enhanced',
+    'hyper-statusline',
     'hyper-search',
+    'hyperterm-safepaste',
+    'hypercwd',
+    'hyper-quit',
+    'hyper-pane',
   ],
 
   // in development, you can create a directory under
